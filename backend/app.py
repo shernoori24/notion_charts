@@ -7,6 +7,9 @@ import os
 load_dotenv()
 
 from database_client import get_notion_data
+import json
+import traceback
+from fastapi.responses import Response
 
 app = FastAPI(title="Notion Charts API")
 
@@ -48,3 +51,18 @@ async def read_data():
 @app.get("/api/health")
 async def health():
     return {"status": "ok"}
+
+
+@app.get("/api/debug")
+async def debug_data():
+    """Debug endpoint that returns raw JSON (helps inspect serialization issues)."""
+    try:
+        df = get_notion_data()
+        data = df.to_dict(orient="records")
+        # Use ensure_ascii=False to preserve UTF-8 characters and return proper bytes
+        text = json.dumps({"count": len(data), "results": data}, ensure_ascii=False)
+        return Response(content=text, media_type="application/json; charset=utf-8")
+    except Exception as e:
+        tb = traceback.format_exc()
+        # Return the traceback as plain text for easier debugging
+        return Response(content=tb, media_type="text/plain; charset=utf-8", status_code=500)
