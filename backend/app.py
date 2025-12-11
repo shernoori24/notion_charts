@@ -42,3 +42,8 @@ async def read_data():
         raise HTTPException(status_code=500, detail=f"Failed to serialize data: {e}")
 
     return {"count": len(data), "results": data}
+
+
+@app.get("/api/health")
+async def health():
+    return {"status": "ok"}
