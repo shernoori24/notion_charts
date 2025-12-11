@@ -6,6 +6,10 @@ import os
 
 load_dotenv()
 
+# Optional API key to protect endpoints in production. If set, requests must include
+# header 'x-api-key: <API_KEY>' to access data endpoints.
+API_KEY = os.getenv("API_KEY")
+
 from database_client import get_notion_data
 
 app = FastAPI(title="Notion Charts API")
@@ -28,8 +32,12 @@ app.add_middleware(
 
 
 @app.get("/api/data")
-async def read_data():
+async def read_data(x_api_key: str | None = None):
     """Return Notion data as JSON (list of objects)."""
+    # enforce API key if configured
+    if API_KEY and x_api_key != API_KEY:
+        raise HTTPException(status_code=401, detail="Invalid or missing API key")
+
     try:
         df = get_notion_data()
     except Exception as e:
