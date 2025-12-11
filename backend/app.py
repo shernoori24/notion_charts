@@ -45,7 +45,12 @@ async def read_data():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to serialize data: {e}")
 
-    return {"count": len(data), "results": data}
+        # sanitize NaN -> None for JSON compatibility
+        sanitized = []
+        for row in data:
+            sanitized.append({k: (None if pd.isna(v) else v) for k, v in row.items()})
+
+        return {"count": len(sanitized), "results": sanitized}
 
 
 @app.get("/api/health")
