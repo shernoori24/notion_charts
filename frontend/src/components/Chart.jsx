@@ -1,7 +1,7 @@
 import React, {useRef, useEffect} from 'react'
 import * as d3 from 'd3'
 
-export default function Chart({data, type}){
+export default function Chart({data, type, xKey: propX, yKey: propY}){
   const ref = useRef()
 
   useEffect(()=>{
@@ -15,11 +15,11 @@ export default function Chart({data, type}){
       return
     }
 
-    // Try to select numeric column for Y and first textual column for X
+    // Select X/Y keys: prefer props (selected by user), otherwise auto-detect
     const sample = data[0]
     const keys = Object.keys(sample)
-    let xKey = keys.find(k=>typeof sample[k] === 'string') || keys[0]
-    let yKey = keys.find(k=>typeof sample[k] === 'number') || keys.find(k=>!isNaN(Number(sample[k])))
+    const xKey = propX || keys.find(k=>typeof sample[k] === 'string') || keys[0]
+    const yKey = propY || keys.find(k=>typeof sample[k] === 'number') || keys.find(k=>!isNaN(Number(sample[k])))
     if(!yKey){
       container.innerHTML = '<p>No numeric column found for Y-axis</p>'
       return
