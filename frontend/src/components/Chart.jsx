@@ -8,13 +8,11 @@ export default function Chart({ data, type, xKey: propX, yKey: propY }) {
     const container = ref.current
     if (!container) return
 
-    console.log('Chart re-rendering with:', { dataLen: data?.length, type, propX, propY })
-
     // Clear previous
     container.innerHTML = ''
 
     if (!data || data.length === 0) {
-      container.innerHTML = '<p>No data</p>'
+      container.innerHTML = '<p>No data available to render.</p>'
       return
     }
 
@@ -50,8 +48,6 @@ export default function Chart({ data, type, xKey: propX, yKey: propY }) {
     }
 
     const width = 800, height = 400, margin = { top: 20, right: 20, bottom: 80, left: 60 }
-
-    console.log('D3 rendering with valid data:', d.length, d[0])
 
     const svg = d3.select(container).append('svg').attr('width', width).attr('height', height)
     if (type === 'Bar') {
@@ -95,11 +91,7 @@ export default function Chart({ data, type, xKey: propX, yKey: propY }) {
       g.selectAll('path').data(pie).join('path').attr('d', arc).attr('fill', (d, i) => color(i)).attr('stroke', 'white')
     }
 
-    // Verify container dimensions
-    const rect = container.getBoundingClientRect()
-    console.log('Chart container dimensions:', rect)
-
   }, [data, type, propX, propY])
 
-  return <div ref={ref} style={{ border: '2px solid red', minHeight: '400px', padding: '10px' }}></div>
+  return <div ref={ref}></div>
 }

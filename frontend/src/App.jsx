@@ -67,8 +67,8 @@ export default function App() {
 
       <main>
         <section>
-          <h2>Data</h2>
-          <pre style={{ maxHeight: 200, overflow: 'auto' }}>{JSON.stringify(data.slice(0, 20), null, 2)}</pre>
+          <h2>Data Preview</h2>
+          <p>Loaded {data.length} rows.</p>
         </section>
         <section>
           <h2>Chart</h2>
